@@ -1,4 +1,6 @@
 __pycache__/
+log/
 test.py
 *.xlsx
 *.out
+*.json

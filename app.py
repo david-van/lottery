@@ -5,11 +5,12 @@ import pymysql
 import dashscope
 import re
 from flask_apscheduler import APScheduler
-from blueprints import user_bp
+from blueprints import user_bp, v2_bp
 import fcntl
 
 app = Flask(__name__)
 app.register_blueprint(user_bp)
+app.register_blueprint(v2_bp)
 app.config.from_object(config)
 
 # 添加任务
@@ -24,6 +25,8 @@ def lock_func():
         f.close()
     except:
         print('当前爬虫任务正在执行，直接跳过')
+        f.close()
+        return;
 
 
 scheduler = APScheduler()
@@ -32,8 +35,9 @@ scheduler.add_job(
     id='crawl_insert_task',  # 任务 ID
     func=lock_func,  # 任务函数
     trigger='interval',  # 触发类型：间隔
-    days=1,  # 每隔 1 天运行一次
-    start_date='2024-11-28 14:04:00',  # 可选：任务开始时间
+    hours=1,  # 每隔 1 小时运行一次
+    # minutes=2,
+    start_date='2024-11-29 16:35:00',  # 可选：任务开始时间
 )
 scheduler.start()
 
@@ -68,10 +72,11 @@ def get_all_matches():
         JOIN match_hafu t4 ON t1.match_id = t4.match_id
         JOIN match_ttg t5 ON t1.match_id = t5.match_id
         JOIN match_crs t6 ON t1.match_id = t6.match_id
-        WHERE date = %s
+        WHERE date >= %s
+        ORDER BY t1.date ASC;
     """
-    cursor.execute(query, ("2024-11-23"))
-    # cursor.execute(query, (today))
+    # cursor.execute(query, ("2024-11-23"))
+    cursor.execute(query, (today))
     matches = cursor.fetchall()  # 获取所有匹配数据
     # print(type(matches), type(matches[0]))
     # 关闭数据库连接
@@ -83,12 +88,12 @@ def get_all_matches():
         # return jsonify({"message": "No matches found for today."}), 404
         return jsonify({"data":{}, "msg":"未查询到今日比赛", "code":200})
 
-    msg = [['主队','客队','让球胜平负','半全场胜平负','比分', '非让球胜','非让球负','非让球平','让球胜','让球负','让球平',
+    msg = [['比赛日期','主队','客队','让球胜平负','半全场胜平负','比分', '非让球胜','非让球负','非让球平','让球胜','让球负','让球平',
             '负负','负平','负胜','平负','平平','平胜','胜负','胜平','胜胜','总进球0','总进球1','总进球2','总进球3','总进球4','总进球5','总进球6','总进球7+',
             '1:0','2:0','2:1','3:0','3:1','3:2','4:0','4:1','4:2','5:0','5:1','5:2','胜其它','0:0','1:1','2:2','3:3','平其它','0:1','0:2','1:2','0:3','1:3','2:3','0:4','1:4','2:4','0:5','1:5','2:5','负其它']]
     for match in matches:
         match["date"] = match["date"].strftime("%Y-%m-%d")
-        tmp = []
+        tmp = [match["date"]]
         for k, v in match.items():
             if k == 'match_id' or k == 'date':
                 continue
@@ -110,8 +115,8 @@ def get_comp_details():
         database="lottery",  # 数据库名称
         charset="utf8mb4",  # 字符集
     )
-    team1 = request.args.get("team1")
-    team2 = request.args.get("team2")
+    team1 = request.args.get("homeTeam")
+    team2 = request.args.get("awayTeam")
     if (team1 == None and team2 == None) or (team1 == None and team2 != None):
         return jsonify({"data":{}, "msg":"未提供队伍名称", "code":400})
     # 执行查询：查找当天的比赛
@@ -121,7 +126,8 @@ def get_comp_details():
             SELECT t1.team_home, t1.team_away, t1.hhad, t1.hafu, t1.crs, t1.date
             FROM match_result t1
             WHERE t1.team_home = %s OR t1.team_away = %s
-            ORDER BY t1.date DESC;
+            ORDER BY t1.date DESC
+            LIMIT 18446744073709551615 OFFSET 1;  -- 排除第一条记录
         """
         cursor.execute(query, (team1, team1))
         matches = cursor.fetchall()  # 获取所有匹配数据
@@ -132,7 +138,8 @@ def get_comp_details():
             SELECT t1.team_home, t1.team_away, t1.hhad, t1.hafu, t1.crs, t1.date
             FROM match_result t1
             WHERE t1.team_home = %s AND t1.team_away = %s OR t1.team_home = %s AND t1.team_away = %s
-            ORDER BY t1.date DESC;
+            ORDER BY t1.date DESC
+            LIMIT 18446744073709551615 OFFSET 1;  -- 排除第一条记录
         """
         cursor.execute(query, (team1, team2, team2, team1))
         matches = cursor.fetchall()  # 获取所有匹配数据
@@ -145,7 +152,7 @@ def get_comp_details():
     msg = [['主队','客队','让球胜平负','半全场胜平负','总比分','比赛日期']]
     for match in matches:
         match["date"] = match["date"].strftime("%Y-%m-%d")
-        nums = match["crs"].split(":")
+        # nums = match["crs"].split(":")
         # match["total"] = int(nums[0]) + int(nums[1])
         tmp = []
         for _, v in match.items():

@@ -133,6 +133,8 @@ def get_meta(data):
 
 
 def restore_data(data):
+    if data["value"]["oddsHistory"] == None or len(data["value"]["oddsHistory"]) == 0:
+        return False
     lst = ["hadList", "hhadList", "ttgList", "hafuList", "crsList"]
     for item in lst:
         if len(data["value"]["oddsHistory"][item]) == 0:
