@@ -3,15 +3,15 @@ import json
 import datetime
 from datetime import timedelta, date
 import pymysql
-from .crawler_all_match_id import crawl_match_ids, crawl_five_league_match_ids
-from .crawl_insert import crawl_match_bet, insert_all_data
+from crawler_all_match_id import crawl_match_ids, crawl_five_league_match_ids
+from crawl_insert import crawl_match_bet, insert_all_data
 
 def query_match_ids_by_date_range(start_date, end_date):
     # 数据库连接配置
     connection = pymysql.connect(
         host="localhost",  # 数据库地址
-        user="root",  # 用户名
-        password="123456",  # 密码
+        user="huan",  # 用户名
+        password="huan",  # 密码
         database="lottery",  # 数据库名称
         charset="utf8mb4",  # 字符集
     )
@@ -48,14 +48,16 @@ def insert_or_update(all_data, match_ids, match_dates, cur_match_ids):
     # 数据库连接配置
     connection = pymysql.connect(
         host="localhost",  # 数据库地址
-        user="root",  # 用户名
-        password="123456",  # 密码
+        user="huan",  # 用户名
+        password="huan",  # 密码
         database="lottery",  # 数据库名称
         charset="utf8mb4",  # 字符集
     )
     try:
         with connection.cursor() as cursor:
             for i, match_id in enumerate(match_ids):
+                if match_id == 1028349 or match_id == 1028492:
+                    continue
                 # 已有数据，update即可
                 if match_id in cur_match_ids:
                     update_match_had = """ UPDATE match_had SET h = %s, a = %s, d = %s WHERE match_id = %s """
@@ -118,6 +120,15 @@ def insert_or_update(all_data, match_ids, match_dates, cur_match_ids):
                     lst.append(match_id)
                     cursor.execute(update_match_hafu, lst)
                     print(f"更新比赛信息4成功，match_id={match_id}")
+
+                    update_match_result= """
+                    UPDATE match_result SET hhad=%s,hafu=%s,crs=%s
+                    WHERE match_id=%s
+                    """
+                    lst= [all_data[i][-1][-3], all_data[i][-1][-2], all_data[i][-1][-1]]
+                    lst.append(match_id)
+                    cursor.execute(update_match_result, lst)
+                    print(f"更新比赛信息5成功，match_id={match_id}")
 
                     connection.commit()
                     print(f"更新比赛信息成功，match_id={match_id}")
@@ -184,12 +195,12 @@ def crawl_insert_newest_match():
     # 获取当前日期
     today = date.today()
     # 起始日期和结束日期
-    start_date = today
-    end_date = start_date + datetime.timedelta(days=6)
+    # start_date = today
+    # end_date = start_date + datetime.timedelta(days=6)
 
     # # 起始日期和结束日期
-    # start_date = datetime.datetime(2024, 11, 30)
-    # end_date = datetime.datetime(2024, 12, 10)
+    start_date = datetime.datetime(2024, 11, 30)
+    end_date = datetime.datetime(2024, 12, 10)
 
     leagues = {
         "英超 2024-2025": {"season_id": "11817", "league_id": "72"},
