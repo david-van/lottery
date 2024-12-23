@@ -125,11 +125,15 @@ def insert_or_update(all_data, match_ids, match_dates, cur_match_ids):
                     UPDATE match_result SET hhad=%s,hafu=%s,crs=%s
                     WHERE match_id=%s
                     """
-                    lst= [all_data[i][-1][-3], all_data[i][-1][-2], all_data[i][-1][-1]]
-                    lst.append(match_id)
-                    cursor.execute(update_match_result, lst)
-                    print(f"更新比赛信息5成功，match_id={match_id}")
-
+                    # 如果开奖了，才更新比赛结果
+                    print(all_data[i][-1])
+                    if len(all_data[i][-1]) == 6:
+                        lst= [all_data[i][-1][-3], all_data[i][-1][-2], all_data[i][-1][-1]]
+                        lst.append(match_id)
+                        cursor.execute(update_match_result, lst)
+                        print(f"更新比赛信息5成功，match_id={match_id}")
+                    else:
+                        pass
                     connection.commit()
                     print(f"更新比赛信息成功，match_id={match_id}")
                 # 新的match，insert
@@ -141,13 +145,13 @@ def insert_or_update(all_data, match_ids, match_dates, cur_match_ids):
                     )
                     lst.append(match_dates[i])
                     print(lst)
-                    if len(lst) == 4:
+                    if len(lst) == 5:
                         insert_match_result = """
-                        INSERT INTO match_result (match_id, team_home, team_away, date) VALUES (%s, %s, %s, %s)
+                        INSERT INTO match_result (match_id, team_home, team_away, league_name, date) VALUES (%s, %s, %s, %s, %s)
                         """
                     else:
                         insert_match_result = """
-                        INSERT INTO match_result VALUES (%s, %s, %s, %s, %s, %s, %s)
+                        INSERT INTO match_result VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                         """
                     cursor.execute(insert_match_result, lst)
                     insert_match_had = """
@@ -199,8 +203,8 @@ def crawl_insert_newest_match():
     # end_date = start_date + datetime.timedelta(days=6)
 
     # # 起始日期和结束日期
-    start_date = datetime.datetime(2024, 11, 30)
-    end_date = datetime.datetime(2024, 12, 10)
+    start_date = datetime.datetime(2024, 12, 22)
+    end_date = datetime.datetime(2024, 12, 23)
 
     leagues = {
         "英超 2024-2025": {"season_id": "11817", "league_id": "72"},
@@ -208,6 +212,16 @@ def crawl_insert_newest_match():
         "法甲 2024-2025": {"season_id": "11848", "league_id": "74"},
         "西甲 2024-2025": {"season_id": "11820", "league_id": "24"},
         "意甲 2024-2025": {"season_id": "11962", "league_id": "73"},
+        "德乙 2024-2025": {"season_id": "11955", "league_id": "1757"},
+        "法乙 2024-2025": {"season_id": "11849", "league_id": "1049"},
+        "英甲 2024-2025": {"season_id": "11877", "league_id": "82"},
+        "英冠 2024-2025": {"season_id": "11876", "league_id": "71"},
+        "荷甲 2024-2025": {"season_id": "11829", "league_id": "76"},
+        "荷乙 2024-2025": {"season_id": "11828", "league_id": "1051"},
+        "葡超 2024-2025": {"season_id": "11974", "league_id": "78"},
+        "澳超 2024-2025": {"season_id": "12214", "league_id": "70"},
+        "欧冠 2024-2025": {"season_id": "11818", "league_id": "30"},
+        "欧冠 2024-2025": {"season_id": "11818", "league_id": "30"},
     }
 
     # TODO 更新最新数据到数据库，包括 1、更新已有比赛赔率 2、加入最新比赛赔率

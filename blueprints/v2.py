@@ -135,7 +135,7 @@ def get_betable_matches():
     for match in matches:
         match["date"] = match["date"].strftime("%Y-%m-%d")
         # 先添加基本信息
-        tmp = { "matchId": match["match_id"], "date": match["date"], "teamHome": match["team_home"], "teamAway": match["team_away"]}
+        tmp = { "matchId": match["match_id"], "date": match["date"], "teamHome": match["team_home"], "teamAway": match["team_away"], "leagueName": match["league_name"]}
         # 添加非让球胜平负信息
         tmp['h'] = match["h"]
         tmp['a'] = match['a']
@@ -196,7 +196,7 @@ def get_details():
         return jsonify({"data":{}, "msg":"未查询到比赛信息", "code":200})
 
     match["date"] = match["date"].strftime("%Y-%m-%d")
-    data = {"date": match["date"], "team_home": match["team_home"], "team_away": match["team_away"], "match_id": match["match_id"]}
+    data = {"date": match["date"], "teamHome": match["team_home"], "teamAway": match["team_away"], "matchId": match["match_id"]}
 
     # 添加非让球胜平负信息
     had = {}
@@ -214,10 +214,10 @@ def get_details():
 
     # 添加比分信息
     crs = {}
-    crs['s01s00'], crs['s02s00'], crs['s02s01'], crs['s03s00'], crs['s03s01'], crs['s03s02'], crs['s04s00'], crs['s04s01'], crs['s04s02'], crs['s05s00'], crs['s05s01'], crs['s05s02'], crs['other_h'] = \
+    crs['s01s00'], crs['s02s00'], crs['s02s01'], crs['s03s00'], crs['s03s01'], crs['s03s02'], crs['s04s00'], crs['s04s01'], crs['s04s02'], crs['s05s00'], crs['s05s01'], crs['s05s02'], crs['otherH'] = \
     match['s01s00'], match['s02s00'], match['s02s01'], match['s03s00'], match['s03s01'], match['s03s02'], match['s04s00'], match['s04s01'], match['s04s02'], match['s05s00'], match['s05s01'], match['s05s02'], match['s_1sh']
-    crs['s00s00'], crs['s01s01'], crs['s02s02'], crs['s03s03'], crs['other_d'] = match['s00s00'], match['s01s01'], match['s02s02'], match['s03s03'], match['s_1sd']
-    crs['s00s01'], crs['s00s02'], crs['s01s02'], crs['s00s03'], crs['s01s03'], crs['s02s03'], crs['s00s04'], crs['s01s04'], crs['s02s04'], crs['s00s05'], crs['s01s05'], crs['s02s05'], crs['other_a'] = \
+    crs['s00s00'], crs['s01s01'], crs['s02s02'], crs['s03s03'], crs['otherD'] = match['s00s00'], match['s01s01'], match['s02s02'], match['s03s03'], match['s_1sd']
+    crs['s00s01'], crs['s00s02'], crs['s01s02'], crs['s00s03'], crs['s01s03'], crs['s02s03'], crs['s00s04'], crs['s01s04'], crs['s02s04'], crs['s00s05'], crs['s01s05'], crs['s02s05'], crs['otherA'] = \
     match['s00s01'], match['s00s02'], match['s01s02'], match['s00s03'], match['s01s03'], match['s02s03'], match['s00s04'], match['s01s04'], match['s02s04'], match['s00s05'], match['s01s05'], match['s02s05'], match['s_1sa']
     data['crs'] = crs
 

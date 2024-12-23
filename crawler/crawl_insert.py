@@ -118,7 +118,8 @@ def get_meta(data):
     meta_list = data["value"]["oddsHistory"]
     lst.append(meta_list["homeTeamAllName"])
     lst.append(meta_list["awayTeamAllName"])
-
+    # HINT 这里增加了联赛名称字段
+    lst.append(meta_list["leagueAllName"])
     meta_list = data["value"]["matchResultList"]
     for item in meta_list:
         if item["code"] == "HHAD":

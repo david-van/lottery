@@ -22,6 +22,7 @@ def get_data_list():
         match_result.append(row["matchid"])
         match_result.append(row["主球队1"])
         match_result.append(row["客球队2"])
+        match_result.append(row["联赛名称"])
         match_result.append(row["让球结果"])
         match_result.append(row["半场结果"])
         match_result.append(row["整场比分"])
@@ -155,8 +156,8 @@ def insert_database(
     # 数据库连接配置
     connection = pymysql.connect(
         host="localhost",  # 数据库地址
-        user="root",  # 用户名
-        password="123456",  # 密码
+        user="huan",  # 用户名
+        password="huan",  # 密码
         database="lottery",  # 数据库名称
         charset="utf8mb4",  # 字符集
     )
@@ -164,7 +165,7 @@ def insert_database(
         with connection.cursor() as cursor:
             for i in range(len(match_result_list)):
                 insert_match_result = """
-                    INSERT INTO match_result VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    INSERT INTO match_result VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                 """
                 print('正在插入result 数据')
                 cursor.execute(insert_match_result, match_result_list[i])
