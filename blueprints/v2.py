@@ -116,7 +116,7 @@ def get_betable_matches():
         FROM match_result t1
         JOIN match_had t2 ON t1.match_id = t2.match_id
         WHERE date >= %s
-        ORDER BY t1.date ASC;
+        ORDER BY t1.league_name ASC, t1.date ASC;
     """
     # cursor.execute(query, ("2024-11-23"))
     cursor.execute(query, (today))
