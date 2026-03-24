@@ -219,6 +219,7 @@ def crawl_insert_newest_match():
         "澳超 2024-2025": {"season_id": "12214", "league_id": "70"},
         "欧冠 2024-2025": {"season_id": "11818", "league_id": "30"},
         "欧冠 2024-2025": {"season_id": "11818", "league_id": "30"},
+        "世界杯预选赛 2026": {"season_id": "11014", "league_id": "1443"},
     }
 
     # TODO 更新最新数据到数据库，包括 1、更新已有比赛赔率 2、加入最新比赛赔率
