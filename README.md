@@ -25,7 +25,7 @@
 - MySQL
 - Gunicorn
 
-依赖见 [requirements.txt](/d:/Projects/PythonProjects/lottery/requirements.txt)。
+依赖见 [requirements.txt](requirements.txt)。
 
 ## 项目结构
 
@@ -71,8 +71,8 @@ lottery/
 
 这些接口的调用逻辑位于：
 
-- [crawler_all_match_id.py](/d:/Projects/PythonProjects/lottery/crawler/crawler_all_match_id.py)
-- [crawl_insert.py](/d:/Projects/PythonProjects/lottery/crawler/crawl_insert.py)
+- [crawler_all_match_id.py](crawler/crawler_all_match_id.py)
+- [crawl_insert.py](crawler/crawl_insert.py)
 
 ## 主要数据表
 
@@ -92,7 +92,7 @@ lottery/
 
 ### 1. Web 服务
 
-主程序入口是 [app.py](/d:/Projects/PythonProjects/lottery/app.py)。
+主程序入口是 [app.py](app.py)。
 
 本地直接启动：
 
@@ -115,7 +115,7 @@ python app.py
 
 ### 3. Gunicorn 部署
 
-Linux 环境可参考 [run.sh](/d:/Projects/PythonProjects/lottery/run.sh)：
+Linux 环境可参考 [run.sh](run.sh)：
 
 ```bash
 bash run.sh
@@ -160,7 +160,7 @@ python app.py
 
 ## LLM 建议生成逻辑
 
-投注建议接口的核心逻辑在 [app.py](/d:/Projects/PythonProjects/lottery/app.py)。
+投注建议接口的核心逻辑在 [app.py](app.py)。
 
 实现方式如下：
 
