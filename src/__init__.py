@@ -1,0 +1,1 @@
+"""Minimal football betting pipeline."""

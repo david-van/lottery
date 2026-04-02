@@ -101,8 +101,8 @@ def crawl_five_league_match_ids(start_date, end_date, leagues):
 
 if __name__ == "__main__":
     # 起始日期和结束日期
-    start_date = datetime(2024, 8, 16)
-    end_date = datetime(2024, 8, 22)
+    start_date = datetime(2026, 3, 21)
+    end_date = datetime(2026, 3, 29)
     # 英超 2024-2025
     season_id = "11817"
     league_id = "72"
